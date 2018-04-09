@@ -1,0 +1,135 @@
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Assignment 2 - Quantitative Chart</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/simple-grid.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<style>
+        *{
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .data-viz-title{
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .data-viz-title select{
+            font-size: 15px;
+            margin: 0px 10px;
+        }
+
+        .arc text {
+          font: 10px sans-serif;
+          text-anchor: middle;
+        }
+
+        .arc path {
+          stroke: #fff;
+        }
+    </style>
+</head>
+<body>
+<h1 class="data-viz-title">Drug and Alcohol 
+    <select>
+        <option value="usage">usage</option>
+        <option value="frequency">frequency</option>
+    </select> 
+    by age's
+    <select>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22-23">22-23</option>
+        <option value="24-25">24-25</option>
+        <option value="26-29">26-29</option>
+        <option value="30-34">30-34</option>
+        <option value="35-49">35-49</option>
+        <option value="50-64">50-64</option>
+        <option value="65+">65+</option>
+    </select>
+</h1>
+
+<svg width="960" height="500"></svg>
+
+<script>
+//d3 creation of select option within the body
+
+
+// d3 pie chart width, height, and setting the radius
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height"),
+    radius = Math.min(width, height) / 2,
+    g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+// d3 color scheme, if more than 20 colors then d3 will reuse colors
+var color = d3.scaleOrdinal(d3.schemeCategory20b);
+
+// define pie chart 
+var pie = d3.pie()
+    .sort(null)
+    .value(function(d) { return d.alcoholuse; });
+
+//defining the arc for each piece of the pie
+var path = d3.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(0);
+
+// defining the labels for the pie chart
+var label = d3.arc()
+    .outerRadius(radius - 40)
+    .innerRadius(radius - 40);
+
+//loading the data and defining how the data will be shown
+d3.csv("DrugUseByAge.csv", function(d) {
+  d.alcoholuse = +d.alcoholuse;
+  return d;
+}, function(error, data) {
+  if (error) throw error;
+
+  var arc = g.selectAll(".arc")
+    .data(pie(data))
+    .enter().append("g")
+      .attr("class", "arc");
+
+  arc.append("path")
+      .attr("d", path)
+      .attr("fill", function(d) { return color(d.data.age); });
+
+  arc.append("text")
+      .attr("transform", function(d) { return "translate(" + label.centroid(d) + ")"; })
+      .attr("dy", "0.35em")
+      .text(function(d) { return d.data.age; });
+
+
+//update data section called from change of select dropdown
+function updateData(){
+
+    }
+});
+
+</script>
+
+</body>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+</html>
