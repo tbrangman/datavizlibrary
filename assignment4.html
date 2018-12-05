@@ -1,12 +1,17 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Assignment 2 - Quantitative Chart</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<link rel="stylesheet" type="text/css" href="css/simple-grid.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-	<script src="https://d3js.org/d3.v4.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+  <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.24.0/d3-legend.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
 	<style>
         *{
             margin: 0;
@@ -14,16 +19,38 @@
             text-align: center;
         }
 
-        .data-viz-title{
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .pieChartDrugLegend{
+          display: none;
+          width: 100%;
+          height: 100%;
         }
 
-        .data-viz-title select{
-            font-size: 15px;
-            margin: 0px 10px;
+        .data-viz-title{
+          font-size: 40px;
+          font-weight: 500;
+          margin: 10px 0;
+        }
+
+        .data-by-538{
+          text-align: left;
+          padding: 20px;
+          position: fixed;
+          right: 0;
+          bottom: 0;
+          font-size: 10px;
+        }
+
+        .data-by-538 img{
+          width: 75px;
+        }
+
+        .data-viz-title img{
+          width: 100px;
+        }
+
+        .pie-chart-title select{
+            font-size: 13px;
+            margin: 0px 5px;
         }
 
         .arc text {
@@ -34,70 +61,232 @@
         .arc path {
           stroke: #fff;
         }
+
+        .bar {
+          fill: steelblue;
+        }
+
+        .bar:hover {
+          fill: brown;
+        }
+
+        .axis--x path {
+          display: none;
+        }
+
+        .barChart{
+          text-align: center;
+          margin: 20px auto;
+        }
+
+        .barChart .chart{
+          width: 800px;
+          height: 525px;
+        }
+
+        .barChart .labels.x-labels {
+          text-anchor: middle;
+        }
+
+        .barChart .labels.y-labels {
+          text-anchor: end;
+        }
+
+        .barChart .grid {
+          stroke: #2d3436;
+          stroke-width: 1;
+        }
+
+        .barChart .bar{
+          cursor: pointer;
+          fill: #ff7675;
+        }
+
+        .barChart text{
+          z-index: 99;
+          font-size: 10px;
+          fill: #000;
+        }
+
     </style>
 </head>
-<body>
-<h1 class="data-viz-title">Drug and Alcohol 
-    <select>
-        <option value="usage">usage</option>
-        <option value="frequency">frequency</option>
-    </select> 
-    by age's
-    <select>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
-        <option value="16">16</option>
-        <option value="17">17</option>
-        <option value="18">18</option>
-        <option value="19">19</option>
-        <option value="20">20</option>
-        <option value="21">21</option>
-        <option value="22-23">22-23</option>
-        <option value="24-25">24-25</option>
-        <option value="26-29">26-29</option>
-        <option value="30-34">30-34</option>
-        <option value="35-49">35-49</option>
-        <option value="50-64">50-64</option>
-        <option value="65+">65+</option>
-    </select>
-</h1>
 
-<svg width="960" height="500"></svg>
+<body>
+<div class="column">
+  <h1 class="data-viz-title">Drug Usage in 2015</h1>
+  <p class="data-by-538">Data provided by: <br><img src="images/538-logo.png"></p>
+</div>
+
+<div class="columns">
+  <div class="column is-one-quarter">
+    <p class="pie-chart-title">
+      <select>
+        <option>Alcohol</option>
+        <option>frequency</option>
+        <option>frequency</option>
+      </select> usage by age</p>
+
+    <svg class="pieChart" width="500" height="500">
+
+    </svg>
+  </div>
+
+  <div class="column pieChartDrugLegend">
+
+  </div>
+
+  <div class="column">
+    <h1>Drug Usage By Age</h1>
+
+    <svg class="barChart" width="750" height="auto">
+
+    <g class="grid y-grid" id="yGrid">
+      <line x1="190" x2="750" y1="470" y2="470"></line>
+
+      <line x1="200" x2="200" y1="60" y2="480"></line>
+
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="440" y2="440"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="410" y2="410"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="385" y2="385"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="355" y2="355"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="330" y2="330"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="305" y2="305"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="285" y2="285"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="260" y2="260"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="235" y2="235"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="210" y2="210"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="190" y2="190"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="160" y2="160"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="130" y2="130"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="110" y2="110"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="80" y2="80"></line>
+      <line stroke-dasharray="2,2" x1="200" x2="750" y1="60" y2="60"></line>
+
+
+    </g>
+
+    <text x="80" y="10" class="label-title">Total Drug Usage</text>
+
+    <g class="labels x-labels">
+      <text x="200" y="500">12</text>
+      <text x="225" y="500">13</text>
+      <text x="250" y="500">14</text>
+      <text x="275" y="500">15</text>
+      <text x="300" y="500">16</text>
+      <text x="325" y="500">17</text>
+      <text x="350" y="500">18</text>
+      <text x="375" y="500">19</text>
+      <text x="400" y="500">20</text>
+      <text x="430" y="500">21</text>
+      <text x="470" y="500">22-23</text>
+      <text x="510" y="500">24-25</text>
+      <text x="550" y="500">26-29</text>
+      <text x="590" y="500">30-34</text>
+      <text x="630" y="500">35-49</text>
+      <text x="670" y="500">50-64</text>
+      <text x="700" y="500">65+</text>
+
+      <!-- Census Year Label -->
+      <text x="460" y="520" class="label-title">Age Groups</text>
+    </g>
+
+    <g class="bar">
+    <rect x="200" y="310" width="10" height="160" title="Age 12: 2798 Users"></rect>
+    <rect x="225" y="320" width="10" height="150" title="Age 13: 2757 Users"></rect>
+    <rect x="250" y="320" width="10" height="150" title="Age 14: 2792 Users"></rect>
+    <rect x="275" y="310" width="10" height="160" title="Age 15: 2956 Users"></rect>
+    <rect x="300" y="300" width="10" height="170" title="Age 16: 3058 Users"></rect>
+    <rect x="325" y="300" width="10" height="170" title="Age 17: 3038 Users"></rect>
+    <rect x="350" y="332" width="10" height="138" title="Age 18: 2469 Users"></rect>
+    <rect x="375" y="340" width="10" height="130" title="Age 19: 2223 Users"></rect>
+    <rect x="400" y="340" width="10" height="130" title="Age 20: 2271 Users"></rect>
+    <rect x="430" y="344" width="10" height="126" title="Age 21: 2354 Users"></rect>
+    <rect x="470" y="220" width="10" height="250" title="Age 22-23: 4707 Users"></rect>
+    <rect x="510" y="225" width="10" height="245" title="Age 24-25: 4591 Users"></rect>
+    <rect x="550" y="328" width="10" height="143" title="Age 26-29: 2628 Users"></rect>
+    <rect x="590" y="320" width="10" height="150" title="Age 30-34: 2864 Users"></rect>
+    <rect x="630" y="100" width="10" height="370" title="Age 35-49: 7391 Users"></rect>
+    <rect x="670" y="265" width="10" height="205" title="Age 50-64: 3923 Users"></rect>
+    <rect x="700" y="344" width="10" height="126" title="Age 65+: 2448 Users"></rect>
+
+
+    <text x="160" y="60">8500</text>
+    <text x="160" y="85">7500</text>
+    <text x="160" y="110">7000</text>
+    <text x="160" y="135">6500</text>
+    <text x="160" y="160">6000</text>
+    <text x="160" y="185">5500</text>
+    <text x="160" y="210">5000</text>
+    <text x="160" y="235">4500</text>
+    <text x="160" y="260">4000</text>
+    <text x="160" y="285">3500</text>
+    <text x="160" y="310">3000</text>
+    <text x="160" y="335">2500</text>
+    <text x="160" y="360">2000</text>
+    <text x="160" y="385">1500</text>
+    <text x="160" y="410">1000</text>
+    <text x="160" y="435">500</text>
+    <text x="160" y="460">0</text>
+    </g>
+
+    </svg>
+  </div>
+</div>
 
 <script>
-//d3 creation of select option within the body
-
-
+  
 // d3 pie chart width, height, and setting the radius
-var svg = d3.select("svg"),
+var svg = d3.select(".pieChart"),
     width = +svg.attr("width"),
     height = +svg.attr("height"),
-    radius = Math.min(width, height) / 2,
+    radius = Math.min(width, height) / 2.3,
     g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 // d3 color scheme, if more than 20 colors then d3 will reuse colors
-var color = d3.scaleOrdinal(d3.schemeCategory20b);
+var color = d3.scaleOrdinal(d3.schemeCategory20c);
 
 // define pie chart 
 var pie = d3.pie()
-    .sort(null)
-    .value(function(d) { return d.alcoholuse; });
+  .sort(null)
+  .value(function(d) { return d.alcoholfrequency; });
 
 //defining the arc for each piece of the pie
 var path = d3.arc()
-    .outerRadius(radius - 10)
-    .innerRadius(0);
+  .outerRadius(radius - 10)
+  .innerRadius(0);
 
 // defining the labels for the pie chart
 var label = d3.arc()
-    .outerRadius(radius - 40)
-    .innerRadius(radius - 40);
+  .outerRadius(radius - 40)
+  .innerRadius(radius - 40);
+
+//d3 legend
+var svg = d3.select(".pieChartDrugLegend").append("svg")
+      .attr("width", 150)
+      .attr("height", 500);
+    
+svg.append("g")
+  .attr("class", "legendOrdinal")
+  .attr("transform", "translate(20,20)");
+
+var categories = ["Alcohol", "2.1-4", "4.1-6", "6.1-8", "8.1-10", "10.1-12", "12.1-14", "14.1-16", "16.1-18", "18.1-20", "20.1-22", "22.1-24", "24.1-26", "26.1-28", "28.1-30", ">30"];
+
+var ordinal = d3.scaleOrdinal()
+  .domain(categories)
+  .range(categories.map((val, i) => 
+    d3.interpolateYlGnBu(i / (categories.length - 1))
+  ));
+
+var legendOrdinal = d3.legendColor()
+  .scale(ordinal);
+
+svg.select(".legendOrdinal")
+  .call(legendOrdinal);
+
 
 //loading the data and defining how the data will be shown
-d3.csv("DrugUseByAge.csv", function(d) {
-  d.alcoholuse = +d.alcoholuse;
+d3.csv("DrugFrequencyByAge.csv", function(d) {
+  d.value = +d.value;
   return d;
 }, function(error, data) {
   if (error) throw error;
@@ -105,31 +294,18 @@ d3.csv("DrugUseByAge.csv", function(d) {
   var arc = g.selectAll(".arc")
     .data(pie(data))
     .enter().append("g")
-      .attr("class", "arc");
+    .attr("class", "arc");
 
   arc.append("path")
       .attr("d", path)
-      .attr("fill", function(d) { return color(d.data.age); });
+      .attr("fill", function(d) { return color(d.data.age) });
 
   arc.append("text")
       .attr("transform", function(d) { return "translate(" + label.centroid(d) + ")"; })
       .attr("dy", "0.35em")
-      .text(function(d) { return d.data.age; });
-
-
-//update data section called from change of select dropdown
-function updateData(){
-
-    }
-});
-
+      .text(function(d) { return d.data.n; });
+  });
 </script>
 
 </body>
-
-
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="js/main.js"></script>
 </html>

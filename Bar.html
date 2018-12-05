@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Bar Chart</title>
+</head>
+
+<body>
+<script type="text/javascript">
+
+var margin = {top: 20, right: 20, bottom: 70, left: 40},
+    width = 1000 - margin.left - margin.right,
+    height = 1000 - margin.top - margin.bottom;
+	
+//x-values because ours are not standardized	
+var xvalues = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22+"-"+23, 24+"-"+25, 26+"-"+29, 30+"-"+34, 35+"-"+49, 50+"-"+64, 65]
+
+//X,Y axis and tick marks
+var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+	y = d3.scaleLinear().rangeRound([height, 0]);
+
+var xAxis = d3.axisBottom(x)
+    .tickFormat(function(d){return d.x;});
+	
+var yAxis = d3.axisLeft(y) 
+    .scale(y)
+    .ticks(10);
+	
+//Begin SVG	
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  	.append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+		  
+//Import Data from CSV		  
+var data=[];
+d3.csv("DrugUseByAge.csv", function(error, dataset) {
+	dataset.forEach(function(d) {
+		dkeys = Object.keys(d);
+	
+		dkeys.forEach(function(dk){
+				val = +d[dk];
+				d[dk.trim()]= val;  //trimming whitespace
+			
+			}
+			
+		)
+	
+		});
+		
+		data=dataset;
+        console.log(data);
+		
+ x.domain(xvalues);//Setting values 
+ y.domain([0, 100]);//for both axis
+
+//X Axis
+  svg.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+	  
+//Y axis	  
+
+  svg.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y))
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .attr("text-anchor", "end")
+      .text("Use");
+	  
+//Create Bars
+//This is only for alcoholuse
+  bars = svg.append("g");  
+ 
+  bars.selectAll("bar")
+      .data(data)
+      .enter().append("rect")
+      .style("fill", "pink")
+      .attr("x", function(d) { return x(d.age); })
+      .attr("width", "50")
+      .attr("y", function(d) { return y(d.alcoholuse); })
+      .attr("height", function(d) { return height - y(d.alcoholuse); });
+
+    });
+</script>
+</body>
+</html>
